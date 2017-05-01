@@ -24,6 +24,11 @@ function cs_init() {
     register_post_type('cs_slideshow', $args);
 }
 add_action('init', 'cs_init');
+add_action('wp_print_scripts', 'cs_register_scripts');
+add_action('wp_print_styles', 'cs_register_styles');
+
+
+
 
 ?>
 
