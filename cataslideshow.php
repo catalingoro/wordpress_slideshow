@@ -12,4 +12,18 @@
  * Domain Path: 
  */
 
- ?>
+function cs_init() {
+    $args = array(
+        'public' => true,
+        'label' => 'Cata Slideshow',
+        'supports' => array(
+            'title',
+            'thumbnail'
+        )
+    );
+    register_post_type('cs_slideshow', $args);
+}
+add_action('init', 'cs_init');
+
+?>
+
