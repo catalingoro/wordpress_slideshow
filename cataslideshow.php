@@ -48,7 +48,8 @@ function cs_register_styles() {
     wp_enqueue_style('cs_styles');
     wp_enqueue_style('cs_styles_theme');
 }
-
+add_image_size('cs_widget', 180, 100, true);
+add_image_size('cs_function', 940, 529, true);
 
 ?>
 
