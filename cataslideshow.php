@@ -50,6 +50,9 @@ function cs_register_styles() {
 }
 add_image_size('cs_widget', 180, 100, true);
 add_image_size('cs_function', 940, 529, true);
+add_theme_support( 'post-thumbnails' );
+
+
 
 ?>
 
