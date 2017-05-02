@@ -12,6 +12,27 @@
  * Domain Path: 
  */
 
+class cs_Widget extends WP_Widget {
+ 
+    public function __construct() {
+        parent::__construct('cs_Widget', 'Cata Slideshow', array('description' => __('A Cata Slideshow Widget', 'text_domain')));
+    }
+}
+public function form($instance) {
+    if (isset($instance['title'])) {
+        $title = $instance['title'];
+    }
+    else {
+        $title = __('Widget Slideshow', 'text_domain');
+    }
+    ?>
+        <p>
+            <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
+            <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
+        </p>
+    <?php
+}
+
 function cs_init() {
     $args = array(
         'public' => true,
@@ -77,10 +98,14 @@ function cs_function($type='cs_function') {
 }
 add_shortcode('cs-shortcode', 'cs_function');
 
+<<<<<<< master
 function cs_widgets_init() {
     register_widget('cs_Widget');
 }
  
 add_action('widgets_init', 'cs_widgets_init');
+=======
+
+>>>>>>> new class
 ?>
 
