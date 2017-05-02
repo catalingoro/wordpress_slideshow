@@ -15,7 +15,7 @@
 function cs_init() {
     $args = array(
         'public' => true,
-        'label' => 'Cata Slideshow',
+        'label' => 'CataSlideshow',
         'supports' => array(
             'title',
             'thumbnail'
@@ -52,6 +52,29 @@ add_image_size('cs_widget', 180, 100, true);
 add_image_size('cs_function', 940, 529, true);
 add_theme_support( 'post-thumbnails' );
 
+function cs_function($type='cs_function') {
+    $args = array(
+        'post_type' => 'cs_slideshow',
+        'posts_per_page' => 5
+    );
+    $result = '<div class="slideshow-wrapper theme-default">';
+    $result .= '<div id="slideshow" class="CataSlideshow">';
+ 
+    //the loop
+    $loop = new WP_Query($args);
+    while ($loop->have_posts()) {
+        $loop->the_post();
+ 
+        $the_url = wp_get_attachment_slideshow_src(get_post_thumbnail_id($post->ID), $type);
+        $result .='<img title="'.get_the_title().'" src="' . $the_url[0] . '" data-thumb="' . $the_url[0] . '" alt=""/>';
+    }
+    $result .= '</div>';
+    $result .='<div id = "htmlcaption" class = "cata-html-caption">';
+    $result .='<strong>This</strong> is an example of a <em>HTML</em> caption with <a href = "#">a link</a>.';
+    $result .='</div>';
+    $result .='</div>';
+    return $result;
+}
 
 
 ?>
