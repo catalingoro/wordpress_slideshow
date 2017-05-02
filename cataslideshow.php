@@ -82,5 +82,12 @@ function cs_widgets_init() {
 }
  
 add_action('widgets_init', 'cs_widgets_init');
+
+public function update($new_instance, $old_instance) {
+    $instance = array();
+    $instance['title'] = strip_tags($new_instance['title']);
+ 
+    return $instance;
+}
 ?>
 
