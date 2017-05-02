@@ -75,7 +75,12 @@ function cs_function($type='cs_function') {
     $result .='</div>';
     return $result;
 }
+add_shortcode('cs-shortcode', 'cs_function');
 
-
+function cs_widgets_init() {
+    register_widget('cs_Widget');
+}
+ 
+add_action('widgets_init', 'cs_widgets_init');
 ?>
 
