@@ -12,6 +12,21 @@
  * Domain Path: 
  */
 
+
+
+add_action('widgets_init', 'cs_widgets_init');
+add_action('init', 'cs_init');
+add_action('wp_print_scripts', 'cs_register_scripts');
+add_action('wp_print_styles', 'cs_register_styles');
+
+add_image_size('cs_widget', 180, 100, true);
+add_image_size('cs_function', 940, 529, true);
+add_theme_support( 'post-thumbnails' );
+
+function cs_widgets_init() {
+    register_widget('cs_Widget');
+}
+
 function cs_init() {
     $args = array(
         'public' => true,
@@ -23,9 +38,6 @@ function cs_init() {
     );
     register_post_type('cs_slideshow', $args);
 }
-add_action('init', 'cs_init');
-add_action('wp_print_scripts', 'cs_register_scripts');
-add_action('wp_print_styles', 'cs_register_styles');
 
 function cs_register_scripts() {
     if (!is_admin()) {
@@ -48,17 +60,20 @@ function cs_register_styles() {
     wp_enqueue_style('cs_styles');
     wp_enqueue_style('cs_styles_theme');
 }
-add_image_size('cs_widget', 180, 100, true);
-add_image_size('cs_function', 940, 529, true);
-add_theme_support( 'post-thumbnails' );
+
+
+/* SHORTCODE START */
 
 function cs_function($type='cs_function') {
     $args = array(
         'post_type' => 'cs_slideshow',
         'posts_per_page' => 5
     );
-    $result = '<div class="slideshow-wrapper theme-default">';
-    $result .= '<div id="slideshow" class="CataSlideshow">';
+
+    $result = '<script>if (!window.jQuery){document.write('<script src="'.plugin_dir_url( __FILE__ ).'standard/js/jquery.min.js"><\/script>');}</script>';
+
+    $result .= '<div class="container">';
+    $result .= '<div id="slides">';
  
     //the loop
     $loop = new WP_Query($args);
@@ -68,26 +83,59 @@ function cs_function($type='cs_function') {
         $the_url = wp_get_attachment_slideshow_src(get_post_thumbnail_id($post->ID), $type);
         $result .='<img title="'.get_the_title().'" src="' . $the_url[0] . '" data-thumb="' . $the_url[0] . '" alt=""/>';
     }
-    $result .= '</div>';
-    $result .='<div id = "htmlcaption" class = "cata-html-caption">';
-    $result .='<strong>This</strong> is an example of a <em>HTML</em> caption with <a href = "#">a link</a>.';
+
+
+    $result .= '<a href="#" class="slidesjs-previous slidesjs-navigation"><i class="icon-chevron-left icon-large"></i></a>';
+    $result .= '<a href="#" class="slidesjs-next slidesjs-navigation"><i class="icon-chevron-right icon-large"></i></a>';
+
     $result .='</div>';
     $result .='</div>';
     return $result;
 }
+
 add_shortcode('cs-shortcode', 'cs_function');
 
-function cs_widgets_init() {
-    register_widget('cs_Widget');
-}
- 
-add_action('widgets_init', 'cs_widgets_init');
 
-public function update($new_instance, $old_instance) {
-    $instance = array();
-    $instance['title'] = strip_tags($new_instance['title']);
- 
-    return $instance;
-}
-?>
 
+/* WIDGET START */
+
+
+class cs_Widget extends WP_Widget {
+
+    public function __construct() {
+        parent::__construct('cs_Widget', 'Cata Slideshow', array('description' => __('A Cata Slideshow Widget', 'text_domain')));
+    }
+
+    public function widget( $args, $instance ) {
+        extract($args);
+        // the title
+        $title = apply_filters('widget_title', $instance['title']);
+        echo $before_widget;
+        if (!empty($title))
+            echo $before_title . $title . $after_title;
+        echo cs_function('cs_widget');
+        echo $after_widget;
+    }
+
+    public function form( $instance ) {
+        if (isset($instance['title'])) {
+            $title = $instance['title'];
+        }
+        else {
+            $title = __('Widget Slideshow', 'text_domain');
+        }
+        ?>
+            <p>
+                <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
+                <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
+            </p>
+        <?php       
+    }
+
+    public function update( $new_instance, $old_instance ) {
+        $instance = array();
+        $instance['title'] = strip_tags($new_instance['title']);
+     
+        return $instance;
+    }
+}
