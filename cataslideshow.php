@@ -12,14 +12,12 @@
  * Domain Path: 
  */
 
-
-
 add_action('widgets_init', 'cs_widgets_init');
 add_action('init', 'cs_init');
 add_action('wp_print_scripts', 'cs_register_scripts');
 add_action('wp_print_styles', 'cs_register_styles');
 
-add_image_size('cs_widget', 180, 100, true);
+add_image_size('cs_widget', 300, 169, true);
 add_image_size('cs_function', 940, 529, true);
 add_theme_support( 'post-thumbnails' );
 
@@ -54,10 +52,12 @@ function cs_register_scripts() {
 function cs_register_styles() {
     // register
     wp_register_style('cs_styles', plugins_url('standard/css/font-awesome.min.css', __FILE__));
+    wp_register_style('cs_styles_style', plugins_url('standard/css/style.css', __FILE__));
     wp_register_style('cs_styles_theme', plugins_url('standard/css/example.css', __FILE__));
  
     // enqueue
     wp_enqueue_style('cs_styles');
+    wp_enqueue_style('cs_styles_style');
     wp_enqueue_style('cs_styles_theme');
 }
 
@@ -70,26 +70,51 @@ function cs_function($type='cs_function') {
         'posts_per_page' => 5
     );
 
-    $result = '<script>if (!window.jQuery){document.write('<script src="'.plugin_dir_url( __FILE__ ).'standard/js/jquery.min.js"><\/script>');}</script>';
+    if($type == 'cs_widget'){
 
-    $result .= '<div class="container">';
-    $result .= '<div id="slides">';
+        $result = '<div class="container">';
+        $result .= '<div id="slides_widget">';
+     
+        //the loop
+        $loop = new WP_Query($args);
+        while ($loop->have_posts()) {
+            $loop->the_post();
+     
+            
+            $result .='<img title="'.get_the_title().'" src="'.get_the_post_thumbnail_url($post->ID, cs_widget).'" />';
+        }
+
+
+        $result .= '<a href="#" class="slidesjs-previous slidesjs-navigation"><i class="icon-chevron-left icon-large"></i></a>';
+        $result .= '<a href="#" class="slidesjs-next slidesjs-navigation"><i class="icon-chevron-right icon-large"></i></a>';
+
+        $result .='</div>';
+        $result .='</div>';
  
-    //the loop
-    $loop = new WP_Query($args);
-    while ($loop->have_posts()) {
-        $loop->the_post();
- 
-        $the_url = wp_get_attachment_slideshow_src(get_post_thumbnail_id($post->ID), $type);
-        $result .='<img title="'.get_the_title().'" src="' . $the_url[0] . '" data-thumb="' . $the_url[0] . '" alt=""/>';
+    } else {
+       
+        $result = '<div class="container">';
+        $result .= '<div id="slides_shortcode">';
+     
+        //the loop
+        $loop = new WP_Query($args);
+        while ($loop->have_posts()) {
+            $loop->the_post();
+     
+            
+            $result .='<img title="'.get_the_title().'" src="'.get_the_post_thumbnail_url($post->ID, cs_function).'" />';
+        }
+
+
+        $result .= '<a href="#" class="slidesjs-previous slidesjs-navigation"><i class="icon-chevron-left icon-large"></i></a>';
+        $result .= '<a href="#" class="slidesjs-next slidesjs-navigation"><i class="icon-chevron-right icon-large"></i></a>';
+
+        $result .='</div>';
+        $result .='</div>';
+
+    
     }
 
-
-    $result .= '<a href="#" class="slidesjs-previous slidesjs-navigation"><i class="icon-chevron-left icon-large"></i></a>';
-    $result .= '<a href="#" class="slidesjs-next slidesjs-navigation"><i class="icon-chevron-right icon-large"></i></a>';
-
-    $result .='</div>';
-    $result .='</div>';
     return $result;
 }
 
