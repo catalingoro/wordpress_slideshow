@@ -6,8 +6,8 @@ jQuery(document).ready(function($) {
 	  });
 
 	$('#slides_widget').slidesjs({
-	    width: 180,
-	    height: 100,
+	    width: 300,
+	    //height: 169,
 	    navigation: false
 	  });
 });
